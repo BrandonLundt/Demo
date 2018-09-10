@@ -17,7 +17,7 @@ Time              NoteProperty timespan Time=00:00:00.4936856
 TotalCount        NoteProperty int TotalCount=1
 #>
 
-#$PesterOut = Invoke-Pester -Script $env:USERPROFILE\Documents\PowerShellProjects\Demo\Pester -PassThru -Quiet
+#$PesterOut = Invoke-Pester -Script $env:USERPROFILE\Documents\PowerShellProjects\Demo\Pester -PassThru -Show None
 #$Context = $Null
 $Context_Passed = 0
 $Context_Failed = 0
@@ -122,9 +122,16 @@ $Dashboard = {
         New-UDRow -EndPoint {
             $Describes = $PesterOut.TestResult | Select-Object -Unique -ExpandProperty Describe
             Foreach( $Table in $Describes){
-                New-UDTable -Title "Pester Results" -Headers @("Name", "Context","Result") -BackgroundColor "#FF334433" -FontColor "#FFFFFF" -Endpoint {
-                    $PesterOut.TestResult | Where-Object Describe -eq $Table | Out-UDTableData -Property @("Name","Context","Result")
+                New-UDColumn -LargeSize 6 -Endpoint {
+                New-UDTable -Title "$Table -- Failures" -Headers @("Name", "Context","Result") -BackgroundColor "#80941F23" -FontColor "#FFFFFF" -Endpoint {
+                    $PesterOut.TestResult | Where-Object Describe -eq $Table | Where-Object Result -ne "Passed" | Out-UDTableData -Property @("Name","Context","Result")
                 }
+                }#New-UDColumn
+                New-UDColumn -LargeSize 6 -Endpoint {
+                New-UDTable -Title "$Table -- Passed" -Headers @("Name", "Context","Result") -BackgroundColor "#FF334433" -FontColor "#FFFFFF" -Endpoint {
+                    $PesterOut.TestResult | Where-Object Describe -eq $Table | Where-Object Result -eq "Passed" | Out-UDTableData -Property @("Name","Context","Result")
+                }
+                }#New-UDCOlumn
             }#foreach
         }#New-UDRow
 	}#New-UDDashboard
