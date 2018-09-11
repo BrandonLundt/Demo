@@ -1,44 +1,27 @@
-Function Publish-PesterResult {
-	param(
-		[Parameter(Mandatory = $True, ValueFromPipeline = $True)]
-		[System.Object]$InputObject,
-		[Parameter(Mandatory = $False)]
-		[int]$Port = 4242
-	)
-	begin {
-		New-Variable -Name DefaultDisplay -Value @{
-			Options = @{  
-				legend = @{  
-					display = $false  
-				}  
-			}
-		}#DefaultDisplay
-		New-Variable -Name ResultsDashboard
-		New-Variable -Name Table
-		New-Variable -Name Describes
-		New-Variable -Name Context
-	}
-	Process {
-		
-		$Dashboard = {
-			New-UDDashboard -Title "Pester Results" -NavBarColor '#FF1c1c1c' -NavBarFontColor "#FF55b3ff" -BackgroundColor "#FF333333" -FontColor "#FFFFFF" -Content {
-				New-UDRow {
-					New-UDColumn -MediumSize 6 -Content {
-						New-UDChart -Title "Overall Failure Percentage" -Type Bar -Endpoint {
-							[PSCustomObject]@{ 
-								Failed = $InputObject.FailedCount
-								Passed = $InputObject.PassedCount
-								Name   = "Total"
+$PesterOut = Invoke-Pester -Script $env:USERPROFILE\Documents\PowerShellProjects\Demo\Pester -PassThru -Show None
+
+$DefaultDisplay = @{
+    Options = @{  
+        legend = @{  
+            display = $false  
+        }  
+    }
+}
+$Dashboard = {
+	New-UDDashboard -Title "Pester Results" -NavBarColor '#FF1c1c1c' -NavBarFontColor "#FF55b3ff" -BackgroundColor "#FF333333" -FontColor "#FFFFFF" -Content {
+        New-UDRow {
+            New-UDColumn -MediumSize 6 -Content{
+			    New-UDChart -Title "Overall Failure Percentage" -Type Bar @DefaultDisplay -Endpoint {
+				    [PSCustomObject]@{ 
+					    Failed = $pesterOut.FailedCount
+                            Passed = $PesterOut.PassedCount
+						    Name = "Total"
 					
-							} | Out-UDChartData -LabelProperty "Name" -Dataset @(
-								New-UdChartDataset -DataProperty "Failed" -Label "Failed Count" -BackgroundColor "#80962F23" -HoverBackgroundColor Red #"#80962F23"
-								New-UdChartDataset -DataProperty "Passed" -Label "Passed Count" -BackgroundColor "#8014558C" -HoverBackgroundColor "#8014558C"
-							)#Dataset array
-						}-Options @{
-							legend = @{
-								display = $false  
-							}  
-						}#New-UDChart
+				    } | Out-UDChartData -LabelProperty "Name" -Dataset @(
+                       New-UdChartDataset -DataProperty "Failed" -Label "Failed Count" -BackgroundColor "#80962F23" -HoverBackgroundColor "#80962F23"
+                       New-UdChartDataset -DataProperty "Passed" -Label "Passed Count" -BackgroundColor "#8014558C" -HoverBackgroundColor "#8014558C"
+                   )#Dataset array
+			    }#New-UDChart
                 
 					}#New-UDColumn
 					New-UDColumn -MediumSize 6 -Content {
