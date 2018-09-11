@@ -1,26 +1,5 @@
-<#Name              MemberType   Definition
-----              ----------   ----------
-Equals            Method       bool Equals(System.Object obj)
-GetHashCode       Method       int GetHashCode()
-GetType           Method       type GetType()
-ToString          Method       string ToString()
-ExcludeTagFilter  NoteProperty object ExcludeTagFilter=null
-FailedCount       NoteProperty int FailedCount=0
-InconclusiveCount NoteProperty int InconclusiveCount=0
-PassedCount       NoteProperty int PassedCount=1
-PendingCount      NoteProperty int PendingCount=0
-SkippedCount      NoteProperty int SkippedCount=0
-TagFilter         NoteProperty object TagFilter=null
-TestNameFilter    NoteProperty object TestNameFilter=null
-TestResult        NoteProperty Object[] TestResult=System.Object[]
-Time              NoteProperty timespan Time=00:00:00.4936856
-TotalCount        NoteProperty int TotalCount=1
-#>
+$PesterOut = Invoke-Pester -Script $env:USERPROFILE\Documents\PowerShellProjects\Demo\Pester -PassThru -Show None
 
-#$PesterOut = Invoke-Pester -Script $env:USERPROFILE\Documents\PowerShellProjects\Demo\Pester -PassThru -Show None
-#$Context = $Null
-$Context_Passed = 0
-$Context_Failed = 0
 $DefaultDisplay = @{
     Options = @{  
         legend = @{  
@@ -30,58 +9,9 @@ $DefaultDisplay = @{
 }
 $Dashboard = {
 	New-UDDashboard -Title "Pester Results" -NavBarColor '#FF1c1c1c' -NavBarFontColor "#FF55b3ff" -BackgroundColor "#FF333333" -FontColor "#FFFFFF" -Content {
-        <##########################################
-         NEEDS REVIEW
-         Thought is to present buttons for the Contexts presented in Pester results.OnButtonClick, charts should filter to that context.
-		New-UDRow {
-            $MyVariable = "Some Text"
-            New-UDButton -Text "Click me!" -OnClick (
-                New-UDEndpoint -Endpoint {
-                    Show-UDToast -Message $ArgumentList[3]
-                } -ArgumentList @($Context_Passed,$Context_Failed,$PesterOut)
-            )
-            $Context = $PesterOut.TestResult | Select-Object Context -Unique
-            Foreach( $Item in $Context){
-                New-UDColumn -Content {
-                    $MyVariable = $PSItem
-                    $Context_ScriptBlock = {
-                        $Context_Passed = 0
-                        $Context_Failed = 0
-                        $PesterOut.TestResult | Where-Object Context -eq $PSItem | ForEach-Object {
-                            if( $PSItem.Result -eq "Passed"){
-                                $Context_Passed++
-                            }
-                            else{
-                                $Context_Failed++
-                            }
-                        }#Foreach-Object
-                    }#Scriptblock
-                    New-UDButton -Text $Item.Context -OnClick ( New-UDEndpoint -ArgumentList @($Context_Passed,$Context_Failed,$PesterOut,$Item) -Endpoint {
-                        $Context_Passed = 0
-                        $Context_Failed = 0
-                        #$PesterOut.TestResult | Where-Object Context -eq $Item.Context | ForEach-Object {
-                        $PesterOut.TestResult | ForEach-Object {
-                            Show-UDToast -Message $Item.Result -Duration 2
-                            if( $Item.Result -eq "Passed"){
-                                $Context_Passed++
-                                Show-UDToast -Message $Item.Name
-                            }
-                            else{
-                                $Context_Failed++
-                                Show-UDToast -Message $Item.Result -Duration 2
-                            }
-                        }#Foreach-Object
-                        #Show-UDToast -Message $Context_Passed
-                    }#Scriptblock
-                    )
-                }#New-UDColumn
-            }#Foreach-Object Context
-        }#New-UDROw
-        End of needs review section
-        #################################################>
         New-UDRow {
             New-UDColumn -MediumSize 6 -Content{
-			    New-UDChart -Title "Overall Failure Percentage" -Type Bar -Endpoint {
+			    New-UDChart -Title "Overall Failure Percentage" -Type Bar @DefaultDisplay -Endpoint {
 				    [PSCustomObject]@{ 
 					    Failed = $pesterOut.FailedCount
                             Passed = $PesterOut.PassedCount
@@ -91,11 +21,7 @@ $Dashboard = {
                        New-UdChartDataset -DataProperty "Failed" -Label "Failed Count" -BackgroundColor "#80962F23" -HoverBackgroundColor "#80962F23"
                        New-UdChartDataset -DataProperty "Passed" -Label "Passed Count" -BackgroundColor "#8014558C" -HoverBackgroundColor "#8014558C"
                    )#Dataset array
-			    }-Options @{  
-                     legend = @{  
-                         display = $false  
-                     }  
-                   }#New-UDChart
+			    }#New-UDChart
                 
             }#New-UDColumn
             New-UDColumn -MediumSize 6 -Content {
