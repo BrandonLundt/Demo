@@ -7,7 +7,7 @@ task -name "WriteOutput" -preaction {
 }
 
 task -name "Import" -depends "WriteOutput" -preaction { Write-Host "Hello from Import"} -action { 
-    Get-ChildItem
+    Get-ChildItem | Write-Verbose
 }
 
 task -name "default" -depends "Import"
