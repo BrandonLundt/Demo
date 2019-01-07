@@ -1,5 +1,7 @@
-task -name "Git" -preaction { Write-Host "Checking Git Status"} -precondition { git status -s} -action{
-    Write-Error -Message "Git status: $((git status -s) -join ', ')"
+task -name "Git" -preaction { Write-Host "Checking Git Status"} -action{
+    if( git status -s){
+        Write-Error -Message "Git status: $((git status -s) -join ', ')"
+    }
 }
 task -name "Unload" -description "Unloads MonoModule from the current session" -action { 
     Remove-Module MonoModule
