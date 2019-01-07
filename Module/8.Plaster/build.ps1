@@ -1,0 +1,1 @@
+Invoke-Plaster -TemplatePath -DestinationPath
