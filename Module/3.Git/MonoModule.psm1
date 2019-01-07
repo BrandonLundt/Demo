@@ -45,4 +45,3 @@ function Get-BetterService {
         Remove-Variable -Name Filter
     }
 }
-
