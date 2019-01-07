@@ -1,0 +1,12 @@
+[
+	{
+	"key": "ctrl+alt+H",
+	"command": "workbench.action.tasks.runTask",
+	"args": "Run tests"
+	},
+	{
+	"key": "ctrl+alt+B",
+	"command": "workbench.action.tasks.runTask",
+	"args": "Run tests"
+	}
+]
