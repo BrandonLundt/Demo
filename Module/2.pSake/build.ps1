@@ -12,6 +12,6 @@ Get-Help -Name task
     End of exploring, let's do something cool.
 #>
 Push-Location -Path .\Module\2.pSake\
-Invoke-psake -buildFile SomethingCool.ps1
+Invoke-psake -buildFile Cool.build.ps1
 
-Invoke-psake -buildFile BetterThanCool.ps1 -docs
+Invoke-psake -buildFile Cooler.build.ps1 -docs
