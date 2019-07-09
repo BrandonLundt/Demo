@@ -1,4 +1,0 @@
-PSRedPen -- https://github.com/BrandonLundt/PSRedPen
-PesterExams -- https://github.com/BrandonLundt/PesterExams
-
-PSKoans -- https://github.com/vexx32/PSKoans
