@@ -63,10 +63,18 @@ $Dashboard = {
 	}#New-UDDashboard
 }#Dashboard
 
-$ResultsDashboard = Get-UDDashboard
+		if ($ResultsDashboard) {
+			$ResultsDashboard | Stop-UDDashboard
+		}
 
-if ($ResultsDashboard) {
-    $ResultsDashboard | Stop-UDDashboard
+		$null = Start-UDDashboard -Content $Dashboard -Port $Port
+	}#Process
+	End {
+		Remove-Variable -Name ResultsDashboard, Table, Describes, Context
+	}
 }
 
-$null = Start-UDDashboard -Content $Dashboard -Port 4242
+#$Config = Get-Content -Path "..\PLXS_Exchange\docs\Config\ALL_Prod.json" | ConvertFrom-Json | ConvertTo-PLXSHashtable
+#$Output = Invoke-Pester -Tags "Config" -PassThru -Script "C:\Users\brandon.lundt\Documents\WindowsPowerShell\Modules\PLXS_Exchange\2.0.10\Diagnostics\Simple"
+Invoke-Pester -Script .\Pester -PassThru -show None | Publish-PesterResult
+$Output | Publish-PesterResult
